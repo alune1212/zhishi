@@ -2,7 +2,7 @@
   <img src="./frontend/public/favicon.svg" width="72" alt="zhishi 标志">
 </p>
 
-<h1 align="center">zhishi</h1>
+<h1 align="center">知试</h1>
 
 <p align="center">
   面向公司内部的视频学习、日常练习与正式考试平台。<br>
