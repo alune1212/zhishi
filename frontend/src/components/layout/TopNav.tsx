@@ -138,7 +138,7 @@ export function TopNav({ candidate, onLogout }: TopNavProps) {
           aria-label="返回考试列表首页"
           className="min-w-0 shrink rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2"
         >
-          <Wordmark size="sm" subtitle="internal exam platform" />
+          <Wordmark size="sm" />
         </Link>
 
         {isDesktop ? (

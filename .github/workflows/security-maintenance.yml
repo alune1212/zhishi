@@ -41,10 +41,10 @@ jobs:
           npm audit --omit=dev --json > ../security-evidence/npm-audit.json || true
       - name: Build final images without deployment
         run: |
-          docker build -t internal-exam-platform-database:security-scan database
-          docker build -t internal-exam-platform-backend:security-scan backend
-          docker build -t internal-exam-platform-frontend:security-scan frontend
-          docker build -t internal-exam-platform-gateway:security-scan nginx
+          docker build -t zhishi-database:security-scan database
+          docker build -t zhishi-backend:security-scan backend
+          docker build -t zhishi-frontend:security-scan frontend
+          docker build -t zhishi-gateway:security-scan nginx
       - name: Verify digest-pinned Trivy and scan final images
         env:
           TRIVY_IMAGE: aquasec/trivy@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e
@@ -57,7 +57,7 @@ jobs:
               --volume "$PWD/security-evidence:/evidence" \
               "$TRIVY_IMAGE" image --exit-code 0 --format json \
               --output "/evidence/trivy-${image_name}.json" \
-              "internal-exam-platform-${image_name}:security-scan"
+              "zhishi-${image_name}:security-scan"
           done
       - name: Record temporary final image inspection for evaluator
         run: |
@@ -65,10 +65,10 @@ jobs:
           # evaluator below copies only its canonical identity fields into the
           # checksummed report and manifest.
           docker image inspect \
-            internal-exam-platform-database:security-scan \
-            internal-exam-platform-backend:security-scan \
-            internal-exam-platform-frontend:security-scan \
-            internal-exam-platform-gateway:security-scan \
+            zhishi-database:security-scan \
+            zhishi-backend:security-scan \
+            zhishi-frontend:security-scan \
+            zhishi-gateway:security-scan \
             > "$RUNNER_TEMP/final-images.inspect.json"
       - name: Enforce release security policy
         run: |

@@ -97,7 +97,7 @@ describe("LoginPage V2 Auth Canvas", () => {
     expect(screen.getByTestId("candidate-login-header").closest("[data-auth-canvas]")).toHaveClass(
       "landscape:grid",
     );
-    expect(screen.getByText("知试")).toBeInTheDocument();
+    expect(screen.getByText("zhishi")).toBeInTheDocument();
     expect(
       screen.getByText("登录后可进行学习、练习和错题复习；正式考试仅对受邀的应考人员开放。"),
     ).toBeInTheDocument();

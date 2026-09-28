@@ -7,7 +7,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U exam_e2e -d internal_exam_e2e"]
 
   fake-smtp:
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-backend:${APP_VERSION_TAG:-e2e}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-backend:${APP_VERSION_TAG:-e2e}
     restart: "no"
     command: ["uv", "run", "--no-sync", "python", "-m", "app.ops.fake_smtp"]
     expose:
@@ -50,7 +50,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.browser-e2e
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-browser-e2e:${APP_VERSION_TAG:-e2e}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-browser-e2e:${APP_VERSION_TAG:-e2e}
     profiles: ["browser-gate"]
     restart: "no"
     working_dir: /workspace/frontend

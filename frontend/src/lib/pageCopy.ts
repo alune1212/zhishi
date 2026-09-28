@@ -166,7 +166,7 @@ export const productGlossary = {
  * Product names may remain bilingual; operational terms must add meaning.
  */
 export const englishAllowlist = {
-  productNames: ["ZHISHI"] as const,
+  productNames: ["zhishi"] as const,
   operationalTerms: ["Excel", "ID", "OTP"] as const,
 } as const;
 

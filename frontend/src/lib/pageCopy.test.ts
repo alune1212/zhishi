@@ -123,7 +123,7 @@ describe("pageCopy", () => {
       stayInExam: "留在考试",
       leaveExam: "离开考试",
     });
-    expect(englishAllowlist.productNames).toEqual(["ZHISHI"]);
+    expect(englishAllowlist.productNames).toEqual(["zhishi"]);
     expect(englishAllowlist.operationalTerms).toEqual(["Excel", "ID", "OTP"]);
   });
 

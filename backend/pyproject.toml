@@ -1,7 +1,7 @@
 [project]
-name = "internal-exam-platform-backend"
+name = "zhishi-backend"
 version = "1.0.0"
-description = "FastAPI backend for the internal exam platform."
+description = "FastAPI backend for zhishi."
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.16.0",

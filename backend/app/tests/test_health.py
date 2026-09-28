@@ -29,9 +29,10 @@ def test_health_returns_ok_status() -> None:
     assert response.status_code == 200
     assert response.json() == {
         "success": True,
-        "data": {"status": "ok", "service": "internal-exam-platform"},
+        "data": {"status": "ok", "service": "zhishi"},
         "message": "ok",
     }
+    assert client.get("/openapi.json").json()["info"]["title"] == "zhishi API"
 
 
 def test_readiness_returns_ready_when_database_and_media_are_available(

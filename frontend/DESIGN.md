@@ -1,11 +1,11 @@
 ---
 version: 2.0
-name: internal-exam-platform-academic-editorial-v2
-updated: 2026-08-17
+name: zhishi-academic-editorial-v2
+updated: 2026-09-28
 status: canonical-contract
 description: >-
   Canonical V2 visual, interaction, copy, ownership, and verification contract
-  for the internal exam platform frontend.
+  for the zhishi frontend.
 ---
 
 # Frontend Design Contract V2
@@ -407,7 +407,7 @@ English is allowed only when it adds product or operational meaning:
 
 | Allowlist                | Allowed placement                                                         | Boundary                                                    |
 | ------------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `ZHISHI`                 | the governed product wordmark/subtitle                                    | exact product name only; never a routine page eyebrow       |
+| `zhishi`                 | the governed product wordmark                                             | exact lowercase product name only; never a routine page eyebrow |
 | `Excel`                  | file-format guidance and import controls                                  | do not translate API state or add a decorative English pair |
 | `ID`                     | a compact machine identifier when the identifier itself is the task       | prefer Chinese `编号` for ordinary table labels             |
 | `OTP`                    | a verification-code implementation term where users need that distinction | never expose an API field or raw error code                 |

@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="./frontend/public/favicon.svg" width="72" alt="知试标志">
+  <img src="./frontend/public/favicon.svg" width="72" alt="zhishi 标志">
 </p>
 
-<h1 align="center">知试 · ZHISHI</h1>
+<h1 align="center">zhishi</h1>
 
 <p align="center">
   面向公司内部的视频学习、日常练习与正式考试平台。<br>
@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <img src="./assets/readme/zhishi-frozen-record.webp" width="360" alt="知试概念海报：一份带答题格、计时条与红色封存章的考试记录，象征冻结题池和作答快照">
+  <img src="./assets/readme/zhishi-frozen-record.webp" width="360" alt="zhishi 概念海报：一份带答题格、计时条与红色封存章的考试记录，象征冻结题池和作答快照">
 </p>
 
 <p align="center">

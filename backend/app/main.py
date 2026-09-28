@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="ZHISHI API", version=settings.app_version)
+    app = FastAPI(title="zhishi API", version=settings.app_version)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,

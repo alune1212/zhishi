@@ -852,7 +852,7 @@ def test_weekly_workflow_scans_every_final_image_with_digest_pinned_trivy() -> N
 
     assert 'cron: "23 18 * * 5"' in workflow
     for image_name in ("database", "backend", "frontend", "gateway"):
-        assert f"internal-exam-platform-{image_name}:security-scan" in workflow
+        assert f"zhishi-{image_name}:security-scan" in workflow
         assert f"trivy-{image_name}.json" in workflow
     trivy_image = (
         "aquasec/trivy@sha256:"

@@ -31,7 +31,7 @@ export function Wordmark({
   variant,
   tone,
   subtitle,
-  label = "知试",
+  label = "zhishi",
   className,
   ...props
 }: WordmarkProps) {

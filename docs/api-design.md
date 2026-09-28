@@ -24,7 +24,7 @@
 GET /api/health
 ```
 
-返回服务健康状态。
+返回服务健康状态，`data.status` 为 `ok`，`data.service` 默认为 `zhishi`。
 
 ## 用户与应考人员端
 

@@ -49,6 +49,8 @@ describe("TopNav", () => {
     renderTopNav({ candidate, onLogout: () => {} });
     const wordmarkLink = screen.getByRole("link", { name: /返回考试列表首页/ });
     expect(wordmarkLink).toHaveAttribute("href", "/exams");
+    expect(within(wordmarkLink).getByText("zhishi")).toBeInTheDocument();
+    expect(within(wordmarkLink).queryByText("internal exam platform")).not.toBeInTheDocument();
   });
 
   it("preserves the ordered desktop destinations and hrefs", () => {

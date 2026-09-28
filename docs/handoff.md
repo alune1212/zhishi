@@ -19,10 +19,10 @@
 
 ## 源码发布 v1.0.0
 
-2026-09-09 已发布 [v1.0.0](https://github.com/alune1212/internal-exam-platform/releases/tag/v1.0.0)，标签绑定提交 `b00e8a49e7d78c10f1502de7fdde494b1c669bfd`。本次只交付源码和 Compose 构建路径，未升级上表中的正式主机。
+2026-09-09 已发布 [v1.0.0](https://github.com/alune1212/zhishi/releases/tag/v1.0.0)，标签绑定提交 `b00e8a49e7d78c10f1502de7fdde494b1c669bfd`。本次只交付源码和 Compose 构建路径，未升级上表中的正式主机。
 
 - 候选验证：启用 PostgreSQL 的后端全量测试 753 项、前端测试 555 项通过；格式、lint、类型、构建与离线资源检查通过。
-- [候选 CI](https://github.com/alune1212/internal-exam-platform/actions/runs/34298203263) 五个任务全部通过，包含 7 个隔离浏览器场景和 100 客户端容量检查；容量报告校验和已核对，提交状态为 clean，100/100 完成交卷。这些结果不替代新版本的正式主机验收。
+- [候选 CI](https://github.com/alune1212/zhishi/actions/runs/34298203263) 五个任务全部通过，包含 7 个隔离浏览器场景和 100 客户端容量检查；容量报告校验和已核对，提交状态为 clean，100/100 完成交卷。这些结果不替代新版本的正式主机验收。
 - Python 运行依赖审计无已知漏洞；npm 运行依赖无高危或严重漏洞，有 4 项低风险报告。未将 CI 合成策略夹具当作完整源码或镜像安全复扫。
 
 ## 现网版本的验收结果

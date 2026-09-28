@@ -4,10 +4,10 @@ import { describe, expect, it } from "vitest";
 import { Wordmark } from "./Wordmark";
 
 describe("Wordmark", () => {
-  it("renders the brand text 知试", () => {
+  it("renders the brand text zhishi", () => {
     render(<Wordmark />);
 
-    expect(screen.getByText("知试")).toBeInTheDocument();
+    expect(screen.getByText("zhishi")).toBeInTheDocument();
   });
 
   it("renders the shared brand glyph", () => {
@@ -19,9 +19,9 @@ describe("Wordmark", () => {
   });
 
   it("renders optional subtitle in an upright caption", () => {
-    render(<Wordmark subtitle="internal exam platform" />);
+    render(<Wordmark subtitle="管理入口" />);
 
-    const sub = screen.getByText("internal exam platform");
+    const sub = screen.getByText("管理入口");
     expect(sub).not.toHaveClass("italic");
     expect(sub.className).toMatch(/text-caption|text-\[11px\]/);
   });
@@ -52,7 +52,7 @@ describe("Wordmark", () => {
 
     const mark = screen.getByTestId("wm").querySelector("[data-brand-mark]") as HTMLElement;
     expect(mark.className).toMatch(/size-7|h-7|w-7/);
-    expect(screen.getByText("知试").className).toMatch(/text-body-lg/);
+    expect(screen.getByText("zhishi").className).toMatch(/text-body-lg/);
   });
 
   it("accepts tone as a variant alias", () => {

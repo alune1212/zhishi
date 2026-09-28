@@ -1,4 +1,4 @@
-# 知试 README 海报制作记录
+# zhishi README 海报制作记录
 
 - Mode: Generate
 - Recipe: lower-left-float / frozen examination record / overlapping paper fragments / archival serif + mono labels / deep ink-red sealing stamp / xerox + halftone + scan grain / quiet academic editorial

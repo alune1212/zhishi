@@ -2,7 +2,7 @@ name: ${COMPOSE_PROJECT_NAME:-internal-exam-dev}
 
 services:
   db:
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-database:${APP_VERSION_TAG:-dev}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-database:${APP_VERSION_TAG:-dev}
     build:
       context: ./database
     restart: unless-stopped
@@ -28,7 +28,7 @@ services:
       - business
 
   backend:
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-backend:${APP_VERSION_TAG:-dev}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-backend:${APP_VERSION_TAG:-dev}
     build:
       context: ./backend
     restart: unless-stopped
@@ -123,7 +123,7 @@ services:
       start_period: 5s
 
   auto-submit-worker:
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-backend:${APP_VERSION_TAG:-dev}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-backend:${APP_VERSION_TAG:-dev}
     restart: unless-stopped
     logging: *bounded-logging
     environment:
@@ -152,7 +152,7 @@ services:
       - business
 
   frontend:
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-frontend:${APP_VERSION_TAG:-dev}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-frontend:${APP_VERSION_TAG:-dev}
     build:
       context: ./frontend
     restart: unless-stopped
@@ -166,7 +166,7 @@ services:
       - gateway
 
   nginx:
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-gateway:${APP_VERSION_TAG:-dev}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-gateway:${APP_VERSION_TAG:-dev}
     build:
       context: ./nginx
     restart: unless-stopped
@@ -185,7 +185,7 @@ services:
         ipv4_address: ${CANDIDATE_GATEWAY_IP:-172.30.0.2}
 
   operator-nginx:
-    image: ${APP_IMAGE_REPOSITORY:-internal-exam-platform}-gateway:${APP_VERSION_TAG:-dev}
+    image: ${APP_IMAGE_REPOSITORY:-zhishi}-gateway:${APP_VERSION_TAG:-dev}
     build:
       context: ./nginx
     restart: unless-stopped
