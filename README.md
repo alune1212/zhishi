@@ -2,7 +2,7 @@
   <img src="./frontend/public/favicon.svg" width="72" alt="zhishi 标志">
 </p>
 
-<h1 align="center">知试</h1>
+<h1 align="center">知试 · Zhishi</h1>
 
 <p align="center">
   面向公司内部的视频学习、日常练习与正式考试平台。<br>
@@ -22,11 +22,12 @@
 </p>
 
 <p align="center">
-  <img src="./assets/readme/zhishi-frozen-record.webp" width="360" alt="zhishi 概念海报：一份带答题格、计时条与红色封存章的考试记录，象征冻结题池和作答快照">
+  <a href="./assets/readme/admin-exam-workspace.png"><img src="./assets/readme/admin-exam-workspace.png" width="480" alt="管理端考试工作台真实截图，展示合成考试的发布状态和名单统计"></a>
+  <a href="./assets/readme/candidate-exam-taking.png"><img src="./assets/readme/candidate-exam-taking.png" width="480" alt="考生答题页真实截图，展示合成题目的答题与保存状态"></a>
 </p>
 
 <p align="center">
-  <sub>概念海报 · Frozen examination record，以封存的考试记录表现作答快照。非产品截图。验收结果见 <a href="./docs/handoff.md">handoff</a>，或<a href="./assets/readme/source/zhishi-frozen-record-prompt.md">查看海报提示词</a>。</sub>
+  <sub>真实浏览器截图 · 独立测试环境与合成数据，点击可查看原图。<a href="./assets/readme/source/browser-screenshots.md">截图来源与验证范围</a>；正式部署验收见 <a href="./docs/handoff.md">handoff</a>。</sub>
 </p>
 
 ## 产品闭环
@@ -70,6 +71,8 @@
 
 需要 Docker Desktop（或兼容的 Docker Engine），以及支持 `docker compose up --wait` 的 Docker Compose v2。仓库根目录的 [`.env.example`](.env.example) 仅包含本机开发默认值。
 
+在宿主机运行源码检查时，推荐 Python 3.12（项目要求 Python ≥ 3.12）、支持仓库 `uv.lock` 的 uv（容器使用 0.12.19），以及 Node.js 22.13+ 的 22.x 版本（与 CI 的 Node 22 对齐）。当前锁定工具也支持 Node ≥ 24；系统自带的旧 Python 不满足要求。前端使用 `npm ci` 安装锁定依赖，后端使用 `uv sync --frozen`，无需全局安装前端构建工具。
+
 ```bash
 # 仅首次初始化；已有 .env 时不要覆盖
 cp .env.example .env
@@ -94,6 +97,22 @@ PostgreSQL 与前端直连端口分别为 `127.0.0.1:25432` 和 `127.0.0.1:25173
 > [!NOTE]
 > `.env.example` 默认使用 `memory` OTP，适合自动化测试，但不会把验证码投递到真实邮箱。手动测试考生登录前，先在本地 `.env` 配置可用的 SMTP。开发环境的管理员凭据也从该文件读取。不要提交 `.env`。
 
+### 管理员首次登录与邮件条件
+
+1. 打开操作员入口，以 `.env` 中的 `ADMIN_USERNAME` / `ADMIN_PASSWORD` 登录。开发示例为 `admin` / `local-dev-admin-password`；无需注册管理员或在数据库中手工创建账号。
+2. 正式内部考试的 `internal` 模式必须设置具名的 `PRIMARY_OPERATOR_*` 和 `BACKUP_OPERATOR_*`、独立强密码及 Token 密钥；`production` 模式必须设置有效的具名操作员及强凭据，未强制配置备份账号。`BACKUP_OPERATOR_ENABLED=false` 使用主操作员；设为 `true` 后切换为唯一有效的备份操作员，主账号不再可用。字段说明见 [`.env.example`](.env.example)。
+3. 手动验证考生登录前，在本地配置 `CANDIDATE_LOGIN_EMAIL_DELIVERY_MODE=smtp`，填写 `CANDIDATE_LOGIN_EMAIL_FROM`、`CANDIDATE_LOGIN_SMTP_HOST` / `PORT`，并按服务商要求同时填写 SMTP 用户名和密码，或同时留空。STARTTLS 与隐式 SSL 只能启用一个；正式模式必须启用其中之一。`CANDIDATE_PUBLIC_BASE_URL` 应为测试考生能访问的入口 origin。
+4. 修改配置后重建对应容器并检查 readiness。考生需申请并验证邮件中的六位验证码，首次验证后填写显示名称完成注册；`memory` 模式不提供网页查看验证码入口。隔离浏览器测试使用模拟 SMTP 捕获合成邮件，仍经过密码和验证码验证。
+
+### 用三道自编题走通考试
+
+- 在题库管理页下载当前题库模板；字段与下载 API 见[导入模板说明](docs/import-templates.md)。可直接导入[单表自编题目样例](docs/examples/synthetic-questions.xlsx)，题型为单选、多选、判断各一道。
+- 创建草稿考试，到该场考试的名单页下载名单模板。在本地名单副本中用两个不同的受控测试邮箱替换[合成名单样例](docs/examples/synthetic-exam-roster.xlsx)中的 `example.com` 邮箱，或只保留一行进行单人演示，再导入该场考试。不使用真实员工名单；隔离 SMTP 测试可保留合成地址。样例来源说明见[样例说明](docs/examples/README.md)。
+- 将默认 50 题规则改为 3 题、总分 3 分、及格分 2 分，题型数量各 1，并设置合适的开考/结束时间与作答时长。先检查发布条件，再输入完整考试标题确认发布；发布冻结题池和名单，随后在名单页显式发送邀请。
+- 考生用名单中的同一邮箱完成验证码登录与首次注册，在开放窗口内进入考试，答题并等待自动保存提示，再提交。交卷后查看分数；全部作答记录结束后，管理员可显式发布答案解析，并在报表中检查与导出结果。
+
+根目录[标准化题库](安全知识竞赛题库_标准化题库.xlsx)是保留的四表转换/回归夹具，不是单表导入模板，不能直接上传。真实题目来源授权尚未确认，不能以仓库 MIT 标识作为来源授权证明；用途、计数和使用边界见[导入模板说明](docs/import-templates.md)。
+
 停止开发环境并保留数据卷：
 
 ```bash
@@ -108,16 +127,16 @@ docker compose --env-file .env down
 | `internal` | 受控私有局域网内的正式内部考试 | 考生通过指定私网 IP 使用 HTTP，须配置强凭据、精确 CORS 和真实 SMTP |
 | `production` | 外部 HTTPS 部署 | 只接受 HTTPS 来源地址；须由外部可信服务处理 TLS，仓库内 Nginx 不处理 TLS |
 
-正式网络、目录和启停命令统一维护在[正式运维手册](docs/minimal-macos-deployment.md)。字段定义见 [`.env.example`](.env.example)，有效值由后端校验。正式 `formal.env` 保存在受保护的主机目录中，凭据不提交到 Git。
+正式网络、目录和启停命令统一维护在[正式运维手册](docs/minimal-macos-deployment.md)，公开文档仅提供占位配置。字段定义见 [`.env.example`](.env.example)，有效值由后端校验。正式配置保存在受保护的主机目录中，凭据不提交到 Git。
 
 ## 功能边界
 
 ### 导入与学习媒体
 
-- 导入使用仓库中的 `.xlsx` 模板，旧版 `.xls` 尚未验证。后端通过 openpyxl 读取工作簿，不解析 Word。默认单文件上限 5 MiB、5000 行、1 个工作表。
+- 导入使用管理页下载的 `.xlsx` 模板或上述自编单表样例，旧版 `.xls` 尚未验证。后端通过 openpyxl 读取工作簿，不解析 Word。默认单文件上限 5 MiB、5000 行、1 个工作表。
 - 题库和单场考试名单导入都会记录 `import_batch`。有效行保存到数据库，错误行可导出为 Excel。
 - 学习视频支持 `mp4` / `webm`，默认单文件上限 500 MiB；学习完成阈值为 90%。
-- 数据库和视频使用持久卷。当前未启用备份、第二副本和恢复演练，因此没有经过验证的数据恢复保障。
+- 数据库和视频使用持久卷，持久卷不等于独立备份。例行备份、第二副本、恢复演练的启用状态与一次性归档证据统一见[上线交接](docs/handoff.md)。
 
 ### 暂不支持的功能
 
@@ -131,7 +150,7 @@ docker compose --env-file .env down
 
 ```bash
 cd backend
-uv sync
+uv sync --frozen
 uv run ruff format . --check
 uv run ruff check .
 uv run ty check
@@ -149,7 +168,7 @@ cd ..
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run format:check
 npm test -- --run
 npm run lint
@@ -167,9 +186,19 @@ sh ops/e2e/run-capacity-gate.sh
 
 浏览器测试使用隔离环境和模拟 SMTP，默认脚本包含测试库备份步骤。容量检查要求工作区干净且 Git 提交可追溯。部署版本、源码发布版本及各自的验收结果见[上线交接](docs/handoff.md)。
 
+文档本地链接与退役契约检查：
+
+```bash
+python3 scripts/check-doc-links.py
+python3 scripts/check-legacy-contracts.py
+npx --yes --package @fission-ai/openspec@1.6.0 openspec validate --all --strict --no-interactive
+```
+
+OpenSpec 命令使用与 CI 相同的 1.6.0 版本。CI 另运行部署/安全门契约及安全策略夹具；策略夹具通过不代表真实安全扫描通过。未配置可丢弃 PostgreSQL 的快速 `pytest` 会跳过对应数据库用例，不能作为全量测试结论。
+
 ## 正式运行
 
-正式环境运行于公司受控局域网内的单台 Mac。考生入口为 `http://192.168.2.225:8080`，管理入口仅在 Mac 本机开放：`http://127.0.0.1:8081/admin/login`。本仓库的 v1.0.0 源码发布与现网版本分离；本次源码发布不升级正式主机，现网提交仍以[上线交接](docs/handoff.md)记录为准。
+正式环境运行于受控局域网内的单台 Mac，管理入口仅在主机本地开放。公开手册使用示例网络与目录；具体主机配置留在本地受保护资料中。源码提交与现网版本分离，本次维护不升级正式主机；已记录的部署提交、观察日期及验收边界以[上线交接](docs/handoff.md)为唯一来源。
 
 - [正式运维手册](docs/minimal-macos-deployment.md)：统一维护主机配置、首次部署和日常启停步骤。
 - [上线交接](docs/handoff.md)：统一记录部署版本、验收结果和未启用的功能。
@@ -179,7 +208,7 @@ sh ops/e2e/run-capacity-gate.sh
 - [依赖安全维护](docs/dependency-security.md)：构建依赖补丁、扫描结果及兼容性验证边界。
 - [OpenSpec 导航](openspec/README.md)：当前规格、未采用的完整运维方案及历史归档。
 
-正式环境未启用发布包签名、备份、第二副本和恢复演练。完整签名/备份运维链、Windows 部署和跨主机迁移不属于 v1.0.0 支持路径；历史要求和未完成验收保留在 OpenSpec 与 Git 中。
+完整签名/例行备份运维链、Windows 部署和跨主机迁移不属于 v1.0.0 支持路径；启用状态与已有证据见[上线交接](docs/handoff.md)，历史要求和未完成验收保留在 OpenSpec 与 Git 中。
 
 ## 代码地图
 
@@ -200,3 +229,5 @@ docs/                  需求、数据库、API、模板、UAT 与交接文档
 ## License
 
 [MIT](LICENSE) © 2026 Alune
+
+MIT 许可保持不变；保留的真实题库资产来源授权尚未确认，不能据此推定其获授权。安全反馈方式见[安全反馈说明](SECURITY.md)。

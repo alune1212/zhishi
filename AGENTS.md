@@ -7,7 +7,7 @@ This project is a lightweight internal exam and practice platform. Keep changes 
 - Backend: `backend/`, FastAPI, Pydantic, SQLAlchemy 2.0, Alembic, PostgreSQL, openpyxl.
 - Frontend: `frontend/`, React, TypeScript, Vite, Tailwind CSS, shadcn-compatible local components, React Router, TanStack Query/Table, React Hook Form, Zod.
 - Deployment: `docker-compose.yml` launches PostgreSQL, backend, frontend, and Nginx. Public API paths stay under `/api`.
-- Runtime: the current internal Mac deployment is live. Read `docs/minimal-macos-deployment.md` before production operations; read `docs/handoff.md` for version and acceptance evidence.
+- Runtime: read `docs/minimal-macos-deployment.md` before production operations; `docs/handoff.md` owns recorded deployment identity, observation dates, and acceptance evidence. Repository commits are not automatically deployed.
 - Docs: `README.md` as startup guide; `docs/requirements.md`, `docs/database-design.md`, `docs/api-design.md`, `docs/import-templates.md`, `docs/official-exam-uat-checklist.md`, and `docs/handoff.md` are the reference docs.
 
 ## Hard Boundaries
@@ -46,7 +46,7 @@ Frontend:
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run format:check
 npm test -- --run
 npm run lint

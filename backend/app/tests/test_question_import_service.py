@@ -1,3 +1,4 @@
+from collections import Counter
 from io import BytesIO
 from pathlib import Path
 from xml.etree.ElementTree import fromstring
@@ -114,6 +115,89 @@ def test_tracked_question_bank_fixture_has_no_local_ooxml_metadata() -> None:
         assert populated_cells > 0
     finally:
         workbook.close()
+
+
+def test_tracked_conversion_fixture_summary_matches_question_records() -> None:
+    fixture_path = (
+        Path(__file__).resolve().parents[3] / "安全知识竞赛题库_标准化题库.xlsx"
+    )
+    workbook = load_workbook(fixture_path, read_only=True, data_only=True)
+    try:
+        assert workbook.sheetnames == [
+            "questions",
+            "unsupported_raw",
+            "summary",
+            "字段说明",
+        ]
+        records = iter(workbook["questions"].values)
+        headers = next(records)
+        questions = [dict(zip(headers, row, strict=True)) for row in records]
+        summary_rows = list(workbook["summary"].values)
+        summary = dict(summary_rows)
+        type_counts = Counter(row["question_type"] for row in questions)
+        category_counts = Counter(row["category_1"] for row in questions)
+
+        # The 613 worksheet rows include the header, leaving 612 questions.
+        # This fixture keeps conversion traceability; it is not an upload file.
+        assert len(questions) == 612
+        assert summary["标准题库主表题数"] == len(questions)
+        for label, question_type in (
+            ("单选题", "single"),
+            ("多选题", "multiple"),
+            ("判断题", "judge"),
+        ):
+            assert summary[label] == type_counts[question_type]
+        assert summary["可直接启用题数"] == sum(
+            row["status"] == "active" and row["parse_status"] == "OK"
+            for row in questions
+        )
+        assert summary["需复核题数"] == sum(
+            row["parse_status"] == "NEED_REVIEW" for row in questions
+        )
+        category_start = summary_rows.index(("分类", "题数")) + 1
+        assert dict(summary_rows[category_start:]) == dict(category_counts)
+        unsupported = list(workbook["unsupported_raw"].values)[1:]
+        assert summary["暂不支持题型原始条目"] == len(unsupported) == 131
+    finally:
+        workbook.close()
+
+
+def test_synthetic_question_sample_imports_all_three_types(db: Session) -> None:
+    sample_path = (
+        Path(__file__).resolve().parents[3] / "docs/examples/synthetic-questions.xlsx"
+    )
+    with sample_path.open("rb") as file_obj:
+        parsed = import_service.parse_workbook(file_obj)
+        assert parsed.headers == QUESTION_HEADERS
+        assert parsed.total_count == 3
+        result = import_questions_from_workbook(db, file_obj, sample_path.name)
+
+    questions = db.scalars(select(Question).order_by(Question.id)).all()
+    batch = db.scalars(select(ImportBatch)).one()
+    assert result.success_count == batch.success_count == batch.total_count == 3
+    assert result.failed_count == 0
+    assert result.failures == []
+    assert [question.question_type for question in questions] == [
+        "single",
+        "multiple",
+        "judge",
+    ]
+    assert all(question.score == 1 for question in questions)
+    assert all(question.status == "active" for question in questions)
+    assert all(question.source == "知试自编合成导入样例" for question in questions)
+    assert [question.source_no for question in questions] == [
+        "SYNTHETIC-001",
+        "SYNTHETIC-002",
+        "SYNTHETIC-003",
+    ]
+    assert [
+        sorted(option.label for option in question.options if option.is_correct)
+        for question in questions
+    ] == [["B"], ["A", "B"], ["A"]]
+    assert [(option.label, option.content) for option in questions[2].options] == [
+        ("A", "正确"),
+        ("B", "错误"),
+    ]
 
 
 def test_import_questions_persists_valid_rows_and_import_batch(db: Session) -> None:

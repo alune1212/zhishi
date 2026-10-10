@@ -1,5 +1,6 @@
 import zipfile
 from io import BytesIO
+from pathlib import Path
 
 import pytest
 from sqlalchemy import select
@@ -27,6 +28,40 @@ def _draft_exam(db: Session) -> Exam:
     db.commit()
     db.refresh(exam)
     return exam
+
+
+def test_synthetic_roster_sample_creates_only_pending_accounts_and_draft_scopes(
+    db: Session,
+) -> None:
+    exam = _draft_exam(db)
+    sample_path = (
+        Path(__file__).resolve().parents[3] / "docs/examples/synthetic-exam-roster.xlsx"
+    )
+    with sample_path.open("rb") as file_obj:
+        parsed = import_service.parse_workbook(file_obj)
+        assert parsed.headers == ROSTER_HEADERS
+        assert parsed.total_count == 2
+        result = import_exam_roster_from_workbook(
+            db, exam.id, file_obj, sample_path.name
+        )
+
+    candidates = db.scalars(select(Candidate).order_by(Candidate.email)).all()
+    scopes = db.scalars(
+        select(ExamCandidateScope).order_by(ExamCandidateScope.roster_email)
+    ).all()
+    batch = db.scalars(select(ImportBatch)).one()
+    assert result.success_count == batch.success_count == batch.total_count == 2
+    assert result.failed_count == 0
+    assert result.failures == []
+    assert [candidate.email for candidate in candidates] == [
+        "demo.candidate1@example.com",
+        "demo.candidate2@example.com",
+    ]
+    assert all(candidate.status == "pending" for candidate in candidates)
+    assert all(candidate.name is None for candidate in candidates)
+    assert [scope.roster_name for scope in scopes] == ["演示考生甲", "演示考生乙"]
+    assert all(scope.exam_id == exam.id for scope in scopes)
+    assert exam.status == "draft"
 
 
 def test_roster_import_creates_pending_account_and_scope(db: Session) -> None:

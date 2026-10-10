@@ -120,6 +120,8 @@ jobs:
         run: uv run pytest app/tests/test_deployment_config.py app/tests/test_capacity_gate.py app/tests/test_security_scan_gate.py
       - name: Reject retired candidate identity contracts
         run: python3 scripts/check-legacy-contracts.py
+      - name: Check current documentation links
+        run: python3 scripts/check-doc-links.py
       - name: Verify no public runtime dependency
         working-directory: frontend
         run: npm run check:offline
