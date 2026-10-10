@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "verified_at": "2026-08-07T00:00:00Z",
+  "verified_at": "2026-10-10T01:10:55Z",
   "required_platforms": [
     "linux/amd64",
     "linux/arm64"
   ],
   "images": {
     "backend_base": {
-      "index_digest": "sha256:69eaf43b0555bbaf37a4daddbecf3c621b3d5d7529a3eea6023f80329455dba9",
+      "index_digest": "sha256:23ab7187a462696e85e168d2a042493d45c8d06c8a90d9aa820b8b83da09f118",
       "platforms": [
         "linux/amd64",
         "linux/arm64"

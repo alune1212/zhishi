@@ -1,6 +1,6 @@
 FROM postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777 AS postgres-tools
 
-FROM ghcr.io/astral-sh/uv:python3.12-alpine@sha256:69eaf43b0555bbaf37a4daddbecf3c621b3d5d7529a3eea6023f80329455dba9
+FROM ghcr.io/astral-sh/uv:0.12.19-python3.12-alpine@sha256:23ab7187a462696e85e168d2a042493d45c8d06c8a90d9aa820b8b83da09f118
 
 WORKDIR /app
 
@@ -12,7 +12,9 @@ RUN apk upgrade --no-cache \
         libsasl \
         lz4-libs \
         zlib \
-        zstd-libs
+        zstd-libs \
+    && uv pip uninstall --python /usr/local/bin/python pip \
+    && rm -rf /usr/local/lib/python3.12/ensurepip
 
 COPY --from=postgres-tools /usr/local/bin/pg_dump /usr/local/bin/pg_dump
 COPY --from=postgres-tools /usr/local/bin/pg_restore /usr/local/bin/pg_restore

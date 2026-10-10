@@ -9,5 +9,6 @@ RUN npm ci --ignore-scripts \
   && npm cache clean --force
 
 COPY . .
+RUN node scripts/harden-braces.mjs
 
 CMD ["npm", "run", "test:e2e"]
