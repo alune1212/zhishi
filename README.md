@@ -176,6 +176,7 @@ sh ops/e2e/run-capacity-gate.sh
 - [考试日操作指南](docs/exam-day-guide.md)：准备题目和名单、发布考试、处理答题及成绩。
 - [实机验收清单](docs/official-exam-uat-checklist.md)：查看验收结果的入口，以及后续变更的复验步骤。
 - [局域网 HTTP 安全例外](docs/security-http-exception.md)：内网 HTTP 的适用边界。
+- [依赖安全维护](docs/dependency-security.md)：构建依赖补丁、扫描结果及兼容性验证边界。
 - [OpenSpec 导航](openspec/README.md)：当前规格、未采用的完整运维方案及历史归档。
 
 正式环境未启用发布包签名、备份、第二副本和恢复演练。完整签名/备份运维链、Windows 部署和跨主机迁移不属于 v1.0.0 支持路径；历史要求和未完成验收保留在 OpenSpec 与 Git 中。

@@ -3,6 +3,7 @@ FROM node:22-alpine@sha256:e58326d0d441090181ac150dc2078d3e2cf6a0d42e809aebba3ef
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+COPY scripts ./scripts
 RUN npm ci
 
 COPY . .

@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "node scripts/harden-braces.mjs",
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
@@ -13,7 +14,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
     "check:offline": "node scripts/check-offline-assets.mjs",
     "test:e2e": "playwright test",
-    "test": "vitest run",
+    "test": "node --test scripts/harden-braces.test.mjs && vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -34,7 +35,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",
-    "@playwright/test": "^1.54.2",
+    "@playwright/test": "^1.55.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -58,6 +59,9 @@
     "typescript": "^5.8.0",
     "typescript-eslint": "^8.61.0",
     "vite": "^8.0.16",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "postcss-selector-parser": "7.1.6"
   }
 }
