@@ -105,6 +105,33 @@ describe("LoginPage V2 Auth Canvas", () => {
     expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
   });
 
+  it.each([
+    ["", "请输入邮箱"],
+    ["not-an-email", "请输入有效邮箱"],
+  ])("rejects invalid email %j with the existing Chinese error", async (email, message) => {
+    const user = userEvent.setup();
+    renderPage();
+
+    if (email) await user.type(screen.getByLabelText("邮箱"), email);
+    await user.click(screen.getByRole("button", { name: "发送验证码" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(message);
+    expect(requestCandidateLoginOtp).not.toHaveBeenCalled();
+  });
+
+  it("requires an OTP after the email challenge without sending an empty verification", async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.type(screen.getByLabelText("邮箱"), "user@example.com");
+    await user.click(screen.getByRole("button", { name: "发送验证码" }));
+    await screen.findByLabelText("验证码");
+    await user.click(screen.getByRole("button", { name: "验证并继续" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("请输入验证码");
+    expect(verifyCandidateLoginOtp).not.toHaveBeenCalled();
+  });
+
   it("uses the existing email OTP request and resend timing behavior", async () => {
     const user = userEvent.setup();
     renderPage();

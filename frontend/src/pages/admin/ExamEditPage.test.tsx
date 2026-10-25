@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -167,6 +167,51 @@ describe("ExamEditPage", () => {
       question_rule: fixedRule,
     });
   });
+
+  it.each([
+    ["empty", ""],
+    ["non-numeric", "NaN"],
+    ["decimal", "1.5"],
+    ["zero", "0"],
+  ])("rejects %s duration and accepts a corrected integer", async (_label, value) => {
+    const user = userEvent.setup();
+    renderExamEditPage();
+
+    const duration = await screen.findByRole("spinbutton", { name: "时长（分钟）" });
+    fireEvent.change(duration, { target: { value } });
+    if (value === "" || value === "NaN") {
+      expect((duration as HTMLInputElement).valueAsNumber).toBeNaN();
+    }
+    await user.click(screen.getByRole("button", { name: /保存配置/ }));
+
+    await waitFor(() => expect(duration).toHaveFocus());
+    expect(updateAdminExam).not.toHaveBeenCalled();
+
+    await user.clear(duration);
+    await user.type(duration, "1");
+    await user.click(screen.getByRole("button", { name: /保存配置/ }));
+
+    await waitFor(() => expect(updateAdminExam).toHaveBeenCalledTimes(1));
+    expect(updateAdminExam).toHaveBeenCalledWith(
+      "1",
+      expect.objectContaining({ duration_minutes: 1 }),
+    );
+  });
+
+  it.each(["2026-06-20T09:00", "2026-06-20T08:59"])(
+    "rejects an end time at or before the start: %s",
+    async (end) => {
+      const user = userEvent.setup();
+      renderExamEditPage();
+
+      await user.type(await screen.findByLabelText(/开放开始时间/), "2026-06-20T09:00");
+      await user.type(screen.getByLabelText(/开放结束时间/), end);
+      await user.click(screen.getByRole("button", { name: /保存配置/ }));
+
+      expect(await screen.findByRole("alert")).toHaveTextContent("结束时间必须晚于开始时间");
+      expect(updateAdminExam).not.toHaveBeenCalled();
+    },
+  );
 
   it("distinguishes publication blockers from warnings and fails closed", async () => {
     vi.mocked(getPublicationReadiness).mockResolvedValueOnce({

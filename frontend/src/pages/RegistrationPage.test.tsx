@@ -102,6 +102,29 @@ describe("RegistrationPage V2 Auth Canvas", () => {
     expect(screen.getByRole("group", { name: "注册操作" })).toBeInTheDocument();
   });
 
+  it("rejects a whitespace-only name and submits a trimmed correction", async () => {
+    const user = userEvent.setup();
+    vi.mocked(completeCandidateRegistration).mockResolvedValue(candidate);
+    renderRegistration({ suggestedDisplayName: "" });
+
+    const nameInput = screen.getByRole("textbox", { name: "姓名" });
+    await user.type(nameInput, "   ");
+    await user.click(screen.getByRole("button", { name: "创建账号并继续" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("请输入姓名");
+    expect(completeCandidateRegistration).not.toHaveBeenCalled();
+
+    await user.clear(nameInput);
+    await user.type(nameInput, " 张三 ");
+    await user.click(screen.getByRole("button", { name: "创建账号并继续" }));
+
+    await waitFor(() => expect(completeCandidateRegistration).toHaveBeenCalledTimes(1));
+    expect(vi.mocked(completeCandidateRegistration).mock.calls[0]?.[0]).toEqual({
+      registration_credential: "registration-credential",
+      display_name: "张三",
+    });
+  });
+
   it("requires confirmation, supports keyboard submit, and preserves long names", async () => {
     const user = userEvent.setup();
     const longName = "这是一个用于验证长文本换行与输入保留的应考人员姓名";
