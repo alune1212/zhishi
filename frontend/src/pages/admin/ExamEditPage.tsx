@@ -97,7 +97,7 @@ function fromDateTimeLocalValue(value: string) {
 export function ExamEditPage() {
   const { examId } = useParams();
   const queryClient = useQueryClient();
-  const form = useForm<ExamEditForm>({
+  const form = useForm<z.input<typeof schema>, unknown, ExamEditForm>({
     resolver: zodResolver(schema),
     defaultValues: {
       title: "临时考试",

@@ -85,6 +85,18 @@ describe("AdminLoginPage", () => {
     expect(screen.queryByRole("complementary")).not.toBeInTheDocument();
   });
 
+  it("keeps empty credentials local with Chinese validation errors", async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole("button", { name: "进入管理后台" }));
+
+    expect(await screen.findByText("请输入管理员账号")).toBeInTheDocument();
+    expect(screen.getByText("请输入密码")).toBeInTheDocument();
+    expect(loginAdmin).not.toHaveBeenCalled();
+    expect(getAdminToken()).toBeNull();
+  });
+
   it("stores the returned session token instead of the password", async () => {
     const user = userEvent.setup();
     renderPage();
